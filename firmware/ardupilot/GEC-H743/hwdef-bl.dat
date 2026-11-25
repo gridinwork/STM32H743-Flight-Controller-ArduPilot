@@ -1,0 +1,54 @@
+# hw definition file for processing by chibios_hwdef.py
+# bootloader for GEC-H743 (project 175 DIY quad), derived from MatekH743 hwdef-bl.dat
+# GEC: Matek leftovers removed (PINIO1 on PD10 = our SAFETY_IN; OSD/EXT CS pins)
+
+MCU STM32H7xx STM32H743xx
+
+# board ID (prototype, not registered with ArduPilot)
+APJ_BOARD_ID 1200
+
+# crystal frequency
+OSCILLATOR_HZ 8000000
+
+# the location where the bootloader will put the firmware
+FLASH_SIZE_KB 2048
+FLASH_RESERVE_START_KB 0
+FLASH_BOOTLOADER_LOAD_KB 128
+
+# USB and TELEM1 (UART7) as bootloader serial ports
+SERIAL_ORDER OTG1 UART7
+PE7 UART7_RX UART7 NODMA
+PE8 UART7_TX UART7 NODMA
+
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# LEDs
+PE3 LED_BOOTLOADER OUTPUT LOW
+define HAL_LED_ON 0
+
+# keep our SPI devices deselected while in the bootloader
+PC15 IMU1_CS CS
+PE11 IMU2_CS CS
+PB12 BARO_CS CS
+
+define CH_CFG_USE_MEMCORE 1
+define CH_CFG_USE_HEAP 1
+define CH_CFG_USE_SEMAPHORES 0
+define CH_CFG_USE_MUTEXES 1
+define CH_CFG_USE_DYNAMIC 1
+define CH_CFG_USE_WAITEXIT 1
+define CH_CFG_USE_REGISTRY 1
+
+# microSD for flashing from SD card
+PC8 SDMMC1_D0 SDMMC1
+PC9 SDMMC1_D1 SDMMC1
+PC10 SDMMC1_D2 SDMMC1
+PC11 SDMMC1_D3 SDMMC1
+PC12 SDMMC1_CK SDMMC1
+PD2 SDMMC1_CMD SDMMC1
+define HAL_OS_FATFS_IO 1
+define AP_BOOTLOADER_FLASH_FROM_SD_ENABLED 1

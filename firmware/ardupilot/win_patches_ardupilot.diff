@@ -1,0 +1,24 @@
+diff --git a/Tools/ardupilotwaf/picolibc.py b/Tools/ardupilotwaf/picolibc.py
+index 0b0aa41..9a3841e 100644
+--- a/Tools/ardupilotwaf/picolibc.py
++++ b/Tools/ardupilotwaf/picolibc.py
+@@ -348,6 +348,7 @@ def _compiler_include_dirs(program, abi_flags, language):
+ 
+ 
+ def _without_toolchain_libc(includes):
++    includes = [p.replace(chr(92), '/') for p in includes]
+     return [path for path in includes
+             if not (path.endswith('/arm-none-eabi/include') or
+                     path.endswith('/arm-none-eabi/usr/include'))]
+diff --git a/Tools/ardupilotwaf/toolchain.py b/Tools/ardupilotwaf/toolchain.py
+index 9cadc6c..606d022 100644
+--- a/Tools/ardupilotwaf/toolchain.py
++++ b/Tools/ardupilotwaf/toolchain.py
+@@ -163,6 +163,7 @@ def configure(cfg):
+     else:
+         cfg.find_program('%s-ar' % cfg.env.TOOLCHAIN, var='AR', quiet=True)
+     cfg.load('compiler_cxx compiler_c gccdeps')
++    cfg.env.LINKFLAGS = [f for f in cfg.env.LINKFLAGS if f != '-Wl,--enable-auto-import']
+ 
+     if sys.platform.startswith("cygwin"):
+         cfg.find_program('nm', var='NM')

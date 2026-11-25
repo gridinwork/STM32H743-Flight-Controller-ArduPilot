@@ -1,0 +1,27 @@
+diff --git a/waflib/Context.py b/waflib/Context.py
+index 971a9e6..da3d9d6 100755
+--- a/waflib/Context.py
++++ b/waflib/Context.py
+@@ -337,6 +337,9 @@ class Context(ctx):
+ 		"""
+ 		subprocess = Utils.subprocess
+ 		kw['shell'] = isinstance(cmd, str)
++		if kw["shell"] and sys.platform == "win32":
++			cmd = ["sh", "-c", cmd.replace(chr(92), "/")]
++			kw["shell"] = False
+ 		self.log_command(cmd, kw)
+ 
+ 		if self.logger:
+diff --git a/waflib/Tools/c_config.py b/waflib/Tools/c_config.py
+index 4d98da5..381d7c7 100644
+--- a/waflib/Tools/c_config.py
++++ b/waflib/Tools/c_config.py
+@@ -1028,7 +1028,7 @@ def get_cc_version(conf, cc, gcc=False, icc=False, clang=False):
+ 	cmd = cc + ['-dM', '-E', '-']
+ 	env = conf.env.env or None
+ 	try:
+-		out, err = conf.cmd_and_log(cmd, output=0, stdin=open('/dev/null','r'), env=env)
++		out, err = conf.cmd_and_log(cmd, output=0, stdin=open(os.devnull,'r'), env=env)
+ 	except Errors.WafError:
+ 		conf.fatal('Could not determine the compiler version %r' % cmd)
+ 
